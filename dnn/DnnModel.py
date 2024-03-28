@@ -16,17 +16,17 @@ class DNN(nn.Module):
         self.fc9 = nn.Linear(64, 32)
         self.fc10 = nn.Linear(32, 4)
 
-        self.tanh = nn.Tanh()
+        self.activation_layer = nn.ReLU()
 
     def forward(self, x):
-        x = self.tanh(self.fc1(x))
-        x = self.tanh(self.fc2(x))
-        x = self.tanh(self.fc3(x))
-        x = self.tanh(self.fc4(x))  # 新增层
-        x = self.tanh(self.fc5(x))  # 新增层
-        x = self.tanh(self.fc6(x))
-        x = self.tanh(self.fc7(x))
-        x = self.tanh(self.fc8(x))
-        x = self.tanh(self.fc9(x))
+        x = self.activation_layer(self.fc1(x))
+        x = self.activation_layer(self.fc2(x))
+        x = self.activation_layer(self.fc3(x))
+        # x = self.activation_layer(self.fc4(x))  # 新增层
+        # x = self.activation_layer(self.fc5(x))  # 新增层
+        x = self.activation_layer(self.fc6(x))
+        x = self.activation_layer(self.fc7(x))
+        x = self.activation_layer(self.fc8(x))
+        x = self.activation_layer(self.fc9(x))
         x = self.fc10(x)
         return x
