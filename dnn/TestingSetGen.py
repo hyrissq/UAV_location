@@ -1,5 +1,6 @@
 import numpy as np
-import math
+
+# import math
 
 
 def generate_modified_complex_curve():
@@ -41,3 +42,16 @@ def generate_modified_complex_curve():
             )
 
     return x_points, y_points
+
+
+def getPoints():
+    x_points, y_points = generate_modified_complex_curve()
+
+    # result_test = np.zeros([len(x_points)-1,4])
+    # for i in range(len(x_points)-2):
+    #     result_test[i][0]=x_points[i]
+    #     result_test[i][1]=y_points[i]
+    #     result_test[i][2]=x_points[i+1]
+    #     result_test[i][3]=y_points[i+1]
+
+    return []
