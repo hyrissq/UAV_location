@@ -8,7 +8,7 @@ vertex4 = np.array([300, 150])
 margin = 0.1  # Example margin
 
 # Training para
-train_points_num = 50
+train_points_num = 50000
 test_points_num = 100
 epoch = 50
 
