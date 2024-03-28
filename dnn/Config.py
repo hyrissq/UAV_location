@@ -8,7 +8,7 @@ vertex4 = np.array([300, 150])
 margin = 0.1  # Example margin
 
 # Training para
-n_points = 10
+train_points_num = 10
 epoch = 2
 
 # oppler and w para

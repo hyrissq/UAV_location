@@ -55,7 +55,7 @@ def shrink_quadrilateral(v1, v2, v3, v4, margin):
 #     return new_v1, new_v2, new_v3
 
 
-def getRandomSamplesInQuadrilateral(x1, y1, x2, y2, x3, y3, x4, y4, n_points):
+def get_random_samples_in_quad(x1, y1, x2, y2, x3, y3, x4, y4, train_points_num):
     # Coordinates of the quadrilateral's vertices
     point1 = np.array([x1, y1])
     point2 = np.array([x2, y2])
@@ -69,7 +69,7 @@ def getRandomSamplesInQuadrilateral(x1, y1, x2, y2, x3, y3, x4, y4, n_points):
     # List to store the random points
     randomPoints = []
 
-    for _ in range(n_points):
+    for _ in range(train_points_num):
         # Randomly choose one of the two triangles to place a point
         if np.random.rand() < 0.5:
             # Working with triangle 1 (p123)
@@ -96,41 +96,12 @@ def getRandomSamplesInQuadrilateral(x1, y1, x2, y2, x3, y3, x4, y4, n_points):
     return randomPoints
 
 
-# def getRandomSamples(x0, y0, x1, y1, x2, y2, n_points):
-#     # Coordinates of the triangle's vertices
-#     point0 = np.array([x0, y0])
-#     point1 = np.array([x1, y1])
-#     point2 = np.array([x2, y2])
-
-#     # Vectors from point 0 to point 1 and from point 0 to point 2
-#     e0 = point1 - point0
-#     e1 = point2 - point0
-
-#     # List to store the random points
-#     randomPoints = []
-
-#     for _ in range(n_points):
-#         # Generate random x, y in the range [0, 1]
-#         x, y = np.random.rand(2)
-#         # Ensure the random point (x, y) lies within the triangle
-#         if x + y > 1:
-#             x = 1 - x
-#             y = 1 - y
-
-#         # Calculate a random point within the triangle
-#         randomPoint = point0 + e0 * x + e1 * y
-#         randomPoints.append(randomPoint)
-
-#     return randomPoints
-
-
-# PUBLIC
-def getCoordinates():
+def get_coordinates():
     shrinked_v1, shrinked_v2, shrinked_v3, shrinked_v4 = shrink_quadrilateral(
         cf.vertex1, cf.vertex2, cf.vertex3, cf.vertex4, cf.margin
     )
 
-    coordinates = getRandomSamplesInQuadrilateral(
+    coordinates = get_random_samples_in_quad(
         shrinked_v1[0],
         shrinked_v1[1],
         shrinked_v2[0],
@@ -139,13 +110,14 @@ def getCoordinates():
         shrinked_v3[1],
         shrinked_v4[0],
         shrinked_v4[1],
-        cf.n_points,
+        cf.train_points_num,
     )
     return np.vstack(coordinates)
 
 
-# PUBLIC
-def getPoints(coordinates):
+def getPoints():
+    coordinates = get_coordinates()
+
     random_distances = np.random.uniform(0.0, 0.05, size=(len(coordinates)))
 
     # shift alt
@@ -167,8 +139,8 @@ def getPoints(coordinates):
 
     return [
         result_array.reshape((len(coordinates), 4)),  # result_array
-        np.array(list(zip(coordinates[:, 0], coordinates[:, 1]))),  # formatted_array_A
-        np.array(list(zip(new_x_values, new_y_values))),  # formatted_array_B
+        np.array(list(zip(coordinates[:, 0], coordinates[:, 1]))),  # coords_A
+        np.array(list(zip(new_x_values, new_y_values))),  # coords_B
     ]
 
 
@@ -194,12 +166,12 @@ def calculate_angles_phi(array_A, array_B, origin):
 
 
 # PUBLIC
-def getAnglePhi(formatted_array_A, formatted_array_B):
+def getAnglePhi(coords_A, coords_B):
     # Call the function and pass the arrays
-    phi1 = calculate_angles_phi(formatted_array_A, formatted_array_B, cf.vertex1)
-    phi2 = calculate_angles_phi(formatted_array_A, formatted_array_B, cf.vertex2)
-    phi3 = calculate_angles_phi(formatted_array_A, formatted_array_B, cf.vertex3)
-    phi4 = calculate_angles_phi(formatted_array_A, formatted_array_B, cf.vertex4)
+    phi1 = calculate_angles_phi(coords_A, coords_B, cf.vertex1)
+    phi2 = calculate_angles_phi(coords_A, coords_B, cf.vertex2)
+    phi3 = calculate_angles_phi(coords_A, coords_B, cf.vertex3)
+    phi4 = calculate_angles_phi(coords_A, coords_B, cf.vertex4)
 
     return [phi1, phi2, phi3, phi4]
 
@@ -243,9 +215,7 @@ def calculate_angle_with_x_axis(x, y, a, b):
 
 
 # 继续使用之前定义的点和距离计算方法
-
-
-def getAnglesTheta(formatted_array_A, formatted_array_B):
+def getAngleTheta(coords_A, coords_B):
     # o1a = []
     # o1b = []
     # o2a = []
@@ -269,9 +239,9 @@ def getAnglesTheta(formatted_array_A, formatted_array_B):
     theta3 = []
     theta4 = []
 
-    for i in range(0, cf.n_points):
-        aPosition = formatted_array_A[i]
-        bPosition = formatted_array_B[i]
+    for i in range(0, cf.train_points_num):
+        aPosition = coords_A[i]
+        bPosition = coords_B[i]
 
         # 计算距离
         # o1a.append(
@@ -350,9 +320,9 @@ def getAnglesTheta(formatted_array_A, formatted_array_B):
 def getWAndDoppler(
     result_array, theta1, theta2, theta3, theta4, phi1, phi2, phi3, phi4
 ):
-    w = np.zeros([cf.n_points, 3])
-    doppler = np.zeros([cf.n_points, 3])
-    for i in range(cf.n_points):
+    w = np.zeros([cf.train_points_num, 3])
+    doppler = np.zeros([cf.train_points_num, 3])
+    for i in range(cf.train_points_num):
         x = result_array[i][0]
         y = result_array[i][1]
         x1 = result_array[i][2]
