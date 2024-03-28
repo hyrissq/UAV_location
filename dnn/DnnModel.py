@@ -22,8 +22,8 @@ class DNN(nn.Module):
         x = self.activation_layer(self.fc1(x))
         x = self.activation_layer(self.fc2(x))
         x = self.activation_layer(self.fc3(x))
-        # x = self.activation_layer(self.fc4(x))  # 新增层
-        # x = self.activation_layer(self.fc5(x))  # 新增层
+        x = self.activation_layer(self.fc4(x))  # 新增层
+        x = self.activation_layer(self.fc5(x))  # 新增层
         x = self.activation_layer(self.fc6(x))
         x = self.activation_layer(self.fc7(x))
         x = self.activation_layer(self.fc8(x))

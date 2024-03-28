@@ -9,9 +9,11 @@ margin = 0.1  # Example margin
 
 # Training para
 train_points_num = 50000
-test_points_num = 100
-epoch = 50
-learning_rate = 0.005
+test_points_num = 128
+epoch = 80
+train_batch_size = 100
+test_batch_size = test_points_num
+learning_rate = 0.001
 
 # oppler and w para
 fc = 6 * 10e9
