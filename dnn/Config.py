@@ -9,6 +9,7 @@ margin = 0.1  # Example margin
 
 # Training para
 train_points_num = 10
+# test_points_num = 10
 epoch = 2
 
 # oppler and w para

@@ -3,6 +3,35 @@ import numpy as np
 import math
 
 
+def shrinkQuadrilateral(v1, v2, v3, v4, margin):
+    # Calculate the centroid of the quadrilateral
+    centroid = np.mean([v1, v2, v3, v4], axis=0)
+
+    # Define a function to move a point towards the centroid by a given margin
+    def move_point_towards_centroid(point, centroid, margin):
+        # Calculate the direction vector from the point to the centroid
+        direction_vector = centroid - point
+        # Normalize the direction vector
+        norm = np.linalg.norm(direction_vector)
+        if norm == 0:
+            return point  # In case the point is already at the centroid
+        normalized_direction_vector = direction_vector / norm
+        # Calculate the new point that is 'margin' distance closer to the centroid
+        new_point = point + margin * normalized_direction_vector
+        return new_point
+
+    # Move each vertex towards the centroid by the margin
+    new_v1 = move_point_towards_centroid(v1, centroid, margin)
+    new_v2 = move_point_towards_centroid(v2, centroid, margin)
+    new_v3 = move_point_towards_centroid(v3, centroid, margin)
+    new_v4 = move_point_towards_centroid(v4, centroid, margin)
+
+    return new_v1, new_v2, new_v3, new_v4
+
+
+#####
+
+
 # Function to calculate the angle between vectors OA and AB for each pair of points
 def calculate_angles_phi(array_A, array_B, origin):
     angles = []

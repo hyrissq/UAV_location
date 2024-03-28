@@ -1,57 +1,84 @@
 import numpy as np
+import Config as cf
+import Common as cm
 
 # import math
 
 
-def generate_modified_complex_curve():
-    # 生成横坐标在90到105之间的点
-    x_values = np.arange(90, 105, 0.01)
+def coord_in_boundary(shrinked_v1, shrinked_v2, shrinked_v3, shrinked_v4, coordinate):
+    # TODO: use shrinked coordinates as boundary, or make assertions so that xx and yy never exceeds the boundary
+    return True
 
-    y_values = (
+
+def get_random_samples_on_curve(
+    shrinked_v1, shrinked_v2, shrinked_v3, shrinked_v4, numbers_to_generate
+):
+
+    lower_x_boundary = 90
+    upper_x_boundary = 105
+    step_size = (upper_x_boundary - lower_x_boundary) / numbers_to_generate
+    xx = np.arange(90, 105, step_size)
+
+    yy = (
         42
-        + 10 * np.sin((x_values - 90) / 5)
-        + 5 * np.cos((x_values - 95) / 5)
-        + 3 * np.sin((x_values - 100) / 2)
-        + 2 * np.exp((x_values - 105) / 10)
-        + 2 * np.sin((x_values - 95) / 2) * np.cos((x_values - 100) / 5)
+        + 10 * np.sin((xx - 90) / 5)
+        + 5 * np.cos((xx - 95) / 5)
+        + 3 * np.sin((xx - 100) / 2)
+        + 2 * np.exp((xx - 105) / 10)
+        + 2 * np.sin((xx - 95) / 2) * np.cos((xx - 100) / 5)
     )
 
-    # 保证相邻点之间的距离小于0.05
-    x_points = []
-    y_points = []
-
-    for i in range(len(x_values) - 1):
-        x_points.append(x_values[i])
-        y_points.append(y_values[i])
-
-        # 计算当前点与下一个点之间的距离
-        distance = np.sqrt(
-            (x_values[i + 1] - x_values[i]) ** 2 + (y_values[i + 1] - y_values[i]) ** 2
+    coordinates = []
+    for i in range(numbers_to_generate):
+        coordinate = [xx[i], yy[i]]
+        assert coord_in_boundary(
+            shrinked_v1, shrinked_v2, shrinked_v3, shrinked_v4, coordinate
         )
+        coordinates.append(coordinate)
 
-        # 如果距离大于0.05，则插入新点，使距离小于0.05
-        while distance > 0.1:
-            x_new = (x_values[i] + x_values[i + 1]) / 2
-            y_new = (y_values[i] + y_values[i + 1]) / 2
-
-            x_points.append(x_new)
-            y_points.append(y_new)
-
-            distance = np.sqrt(
-                (x_values[i + 1] - x_new) ** 2 + (y_values[i + 1] - y_new) ** 2
-            )
-
-    return x_points, y_points
+    return coordinates
 
 
+def get_coordinates():
+    shrinked_v1, shrinked_v2, shrinked_v3, shrinked_v4 = cm.shrinkQuadrilateral(
+        cf.vertex1, cf.vertex2, cf.vertex3, cf.vertex4, cf.margin
+    )
+
+    coordinates = get_random_samples_on_curve(
+        shrinked_v1,
+        shrinked_v2,
+        shrinked_v3,
+        shrinked_v4,
+        cf.train_points_num,
+    )
+    return np.vstack(coordinates)
+
+
+# this is not clean!
 def getPoints():
-    x_points, y_points = generate_modified_complex_curve()
+    coordinates = get_coordinates()
 
-    # result_test = np.zeros([len(x_points)-1,4])
-    # for i in range(len(x_points)-2):
-    #     result_test[i][0]=x_points[i]
-    #     result_test[i][1]=y_points[i]
-    #     result_test[i][2]=x_points[i+1]
-    #     result_test[i][3]=y_points[i+1]
+    random_distances = np.random.uniform(0.0, 0.05, size=(len(coordinates)))
 
-    return []
+    # shift alt
+    # Generate random angles in the srange (0, 2*pi)
+    random_angles = np.random.uniform(0, 2 * np.pi, size=(len(coordinates)))
+
+    # Convert polar coordinates to cartesian coordinates for the second point
+    delta_x = random_distances * np.cos(random_angles)
+    delta_y = random_distances * np.sin(random_angles)
+
+    # Create the second set of coordinates
+    new_x_values = coordinates[:, 0] + delta_x
+    new_y_values = coordinates[:, 1] + delta_y
+
+    # Combine the original and new coordinates to form a 4D vector
+    result_array = np.column_stack(
+        (coordinates[:, 0], coordinates[:, 1], new_x_values, new_y_values)
+    )
+
+    return [
+        result_array.reshape((len(coordinates), 4)),  # result_array
+        np.array(list(zip(coordinates[:, 0], coordinates[:, 1]))),  # coords_A
+        np.array(list(zip(new_x_values, new_y_values))),  # coords_B
+    ]

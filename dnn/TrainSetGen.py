@@ -1,56 +1,6 @@
 import numpy as np
 import Config as cf
-
-
-def shrink_quadrilateral(v1, v2, v3, v4, margin):
-    # Calculate the centroid of the quadrilateral
-    centroid = np.mean([v1, v2, v3, v4], axis=0)
-
-    # Define a function to move a point towards the centroid by a given margin
-    def move_point_towards_centroid(point, centroid, margin):
-        # Calculate the direction vector from the point to the centroid
-        direction_vector = centroid - point
-        # Normalize the direction vector
-        norm = np.linalg.norm(direction_vector)
-        if norm == 0:
-            return point  # In case the point is already at the centroid
-        normalized_direction_vector = direction_vector / norm
-        # Calculate the new point that is 'margin' distance closer to the centroid
-        new_point = point + margin * normalized_direction_vector
-        return new_point
-
-    # Move each vertex towards the centroid by the margin
-    new_v1 = move_point_towards_centroid(v1, centroid, margin)
-    new_v2 = move_point_towards_centroid(v2, centroid, margin)
-    new_v3 = move_point_towards_centroid(v3, centroid, margin)
-    new_v4 = move_point_towards_centroid(v4, centroid, margin)
-
-    return new_v1, new_v2, new_v3, new_v4
-
-
-# def shrink_triangle(v1, v2, v3, margin):
-#     # Calculate the centroid of the triangle
-#     centroid = np.mean([v1, v2, v3], axis=0)
-
-#     # Define a function to move a point towards the centroid by a given margin
-#     def move_point_towards_centroid(point, centroid, margin):
-#         # Calculate the direction vector from the point to the centroid
-#         direction_vector = centroid - point
-#         # Normalize the direction vector
-#         norm = np.linalg.norm(direction_vector)
-#         if norm == 0:
-#             return point  # In case the point is already at the centroid
-#         normalized_direction_vector = direction_vector / norm
-#         # Calculate the new point that is 'margin' distance closer to the centroid
-#         new_point = point + margin * normalized_direction_vector
-#         return new_point
-
-#     # Move each vertex towards the centroid by the margin
-#     new_v1 = move_point_towards_centroid(v1, centroid, margin)
-#     new_v2 = move_point_towards_centroid(v2, centroid, margin)
-#     new_v3 = move_point_towards_centroid(v3, centroid, margin)
-
-#     return new_v1, new_v2, new_v3
+import Common as cm
 
 
 def get_random_samples_in_quad(x1, y1, x2, y2, x3, y3, x4, y4, train_points_num):
@@ -95,7 +45,7 @@ def get_random_samples_in_quad(x1, y1, x2, y2, x3, y3, x4, y4, train_points_num)
 
 
 def get_coordinates():
-    shrinked_v1, shrinked_v2, shrinked_v3, shrinked_v4 = shrink_quadrilateral(
+    shrinked_v1, shrinked_v2, shrinked_v3, shrinked_v4 = cm.shrinkQuadrilateral(
         cf.vertex1, cf.vertex2, cf.vertex3, cf.vertex4, cf.margin
     )
 
