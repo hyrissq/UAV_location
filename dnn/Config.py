@@ -7,5 +7,11 @@ vertex3 = np.array([100, 100])
 vertex4 = np.array([300, 150])
 margin = 0.1  # Example margin
 
+# Training para
 n_points = 10
 epoch = 2
+
+# oppler and w para
+fc = 6 * 10e9
+c = 3 * 10e8
+v = 10
