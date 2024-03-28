@@ -8,9 +8,9 @@ vertex4 = np.array([300, 150])
 margin = 0.1  # Example margin
 
 # Training para
-train_points_num = 10
-# test_points_num = 10
-epoch = 2
+train_points_num = 50
+test_points_num = 100
+epoch = 50
 
 # oppler and w para
 fc = 6 * 10e9

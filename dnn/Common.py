@@ -127,7 +127,9 @@ def get_angle_theta(coords_A, coords_B):
     theta3 = []
     theta4 = []
 
-    for i in range(0, cf.train_points_num):
+    data_length = np.shape(coords_A)[0]
+
+    for i in range(0, data_length):
         aPosition = coords_A[i]
         bPosition = coords_B[i]
 
@@ -206,12 +208,14 @@ def get_angle_theta(coords_A, coords_B):
 
 
 def getWAndDoppler(coords_A, coords_B):
+    data_length = np.shape(coords_A)[0]
+
     [phi1, phi2, phi3, phi4] = get_angle_phi(coords_A, coords_B)
     [theta1, theta2, theta3, theta4] = get_angle_theta(coords_A, coords_B)
 
-    w = np.zeros([cf.train_points_num, 3])
-    doppler = np.zeros([cf.train_points_num, 3])
-    for i in range(cf.train_points_num):
+    w = np.zeros([data_length, 3])
+    doppler = np.zeros([data_length, 3])
+    for i in range(data_length):
         x = coords_A[i][0]
         y = coords_A[i][1]
         x1 = coords_B[i][0]
