@@ -23,7 +23,7 @@ class RBF(nn.Module):
         G = np.zeros((input.shape[0], self.num_centers), dtype=np.float)
         for ci, c in enumerate(self.centers):
             for xi, x in enumerate(input):
-                G[xi, ci] = self.basisfunc(c, input)
+                G[xi, ci] = self.basisfunc(c, x)
         return G
 
     def train(self, input, output):

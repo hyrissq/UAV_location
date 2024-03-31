@@ -19,3 +19,6 @@ learning_rate = 0.0003
 fc = 6 * 10e9
 c = 3 * 10e8
 v = 10
+
+# using_model = "dnn"
+using_model = "rbf"
