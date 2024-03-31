@@ -1,4 +1,4 @@
-import Config as cf
+import src.Config as cf
 import numpy as np
 import math
 

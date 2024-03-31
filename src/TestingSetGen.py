@@ -1,6 +1,6 @@
 import numpy as np
-import Config as cf
-import Common as cm
+import src.Config as cf
+import src.Common as cm
 
 # import math
 

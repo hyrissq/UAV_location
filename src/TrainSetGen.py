@@ -1,6 +1,6 @@
 import numpy as np
-import Config as cf
-import Common as cm
+import src.Config as cf
+import src.Common as cm
 
 
 def get_random_samples_in_quad(x1, y1, x2, y2, x3, y3, x4, y4, train_points_num):
