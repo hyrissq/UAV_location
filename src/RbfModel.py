@@ -7,39 +7,59 @@ def gaussian(alpha):
     return torch.exp(-1 * alpha.pow(2))
 
 
-class RBF(nn.Module):
+# class RBF(nn.Module):
 
+#     def __init__(self, in_features, out_features):
+#         super(RBF, self).__init__()
+#         self.in_features = in_features
+#         self.out_features = out_features
+#         self.centers = nn.Parameter(torch.Tensor(out_features, in_features))
+#         self.log_sigmas = nn.Parameter(torch.Tensor(out_features))
+#         self.basis_func = gaussian
+#         self.reset_parameters()
+
+#     def reset_parameters(self):
+#         # initializing centers from normal distributions with 0 mean and std 1
+#         nn.init.normal_(self.centers, 0, 1)
+#         # initializing sigmas with 0 value
+#         nn.init.constant_(self.log_sigmas, 0)
+
+#     def forward(self, x):
+#         """Forward pass"""
+#         input = x
+#         size = (input.size(0), self.out_features, self.in_features)
+#         x = input.unsqueeze(1).expand(size)
+#         c = self.centers.unsqueeze(0).expand(size)
+#         distances = (x - c).pow(2).sum(-1).pow(0.5) / torch.exp(
+#             self.log_sigmas
+#         ).unsqueeze(0)
+#         return self.basis_func(distances)
+
+
+class RBF(nn.Module):
     def __init__(self, in_features, out_features):
         super(RBF, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
         self.centers = nn.Parameter(torch.Tensor(out_features, in_features))
         self.log_sigmas = nn.Parameter(torch.Tensor(out_features))
-        self.basis_func = gaussian
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        # initializing centers from normal distributions with 0 mean and std 1
-        nn.init.normal_(self.centers, 0, 1)
-        # initializing sigmas with 0 value
-        nn.init.constant_(self.log_sigmas, 0)
+        nn.init.uniform_(self.centers, -1, 1)
+        nn.init.uniform_(self.log_sigmas, -1, 1)
 
     def forward(self, x):
-        """Forward pass"""
-        input = x
-        size = (input.size(0), self.out_features, self.in_features)
-        x = input.unsqueeze(1).expand(size)
+        size = (x.size(0), self.out_features, self.in_features)
+        x = x.unsqueeze(1).expand(size)
         c = self.centers.unsqueeze(0).expand(size)
-        distances = (x - c).pow(2).sum(-1).pow(0.5) / torch.exp(
-            self.log_sigmas
+        distances = (x - c).pow(2).sum(-1).pow(0.5) * torch.exp(
+            -self.log_sigmas
         ).unsqueeze(0)
-        return self.basis_func(distances)
+        return torch.exp(-distances.pow(2))
 
 
 class RBFNetwork(nn.Module):
     def __init__(self):
         in_features = 14
-        hidden_features = 10  #
+        hidden_features = 8  #
         out_features = 4
 
         super(RBFNetwork, self).__init__()
