@@ -64,11 +64,31 @@ class RBFNetwork(nn.Module):
 
         super(RBFNetwork, self).__init__()
         self.rbf_layer = RBF(in_features, hidden_features)
-        self.linear_layer = nn.Linear(hidden_features, out_features)
+        self.fc1 = nn.Linear(hidden_features, 128)
+        self.fc2 = nn.Linear(128, 256)
+        self.fc3 = nn.Linear(256, 512)
+        self.fc4 = nn.Linear(512, 512)  # 新增层
+        self.fc5 = nn.Linear(512, 512)  # 新增层
+        self.fc6 = nn.Linear(512, 256)
+        self.fc7 = nn.Linear(256, 128)
+        self.fc8 = nn.Linear(128, 64)
+        self.fc9 = nn.Linear(64, 32)
+        self.fc10 = nn.Linear(32, out_features)
+
+        self.activation_layer = nn.ReLU()
 
     def forward(self, x):
         x = self.rbf_layer(x)
-        x = self.linear_layer(x)
+        x = self.activation_layer(self.fc1(x))
+        x = self.activation_layer(self.fc2(x))
+        x = self.activation_layer(self.fc3(x))
+        x = self.activation_layer(self.fc4(x))  # 新增层
+        x = self.activation_layer(self.fc5(x))  # 新增层
+        x = self.activation_layer(self.fc6(x))
+        x = self.activation_layer(self.fc7(x))
+        x = self.activation_layer(self.fc8(x))
+        x = self.activation_layer(self.fc9(x))
+        x = self.fc10(x)
         return x
 
 
