@@ -43,7 +43,7 @@ class RBF(nn.Module):
         self.out_features = out_features
         self.centers = nn.Parameter(torch.Tensor(out_features, in_features))
         self.log_sigmas = nn.Parameter(torch.Tensor(out_features))
-        nn.init.uniform_(self.centers, -1, 1)
+        nn.init.uniform_(self.centers, 0, 300)
         nn.init.uniform_(self.log_sigmas, -1, 1)
 
     def forward(self, x):
@@ -88,7 +88,7 @@ class RBFNetwork(nn.Module):
         self.rbf_layer = RBF(32, 16)
         self.final_layer = nn.Linear(16, 4)
 
-        self.activation_layer = nn.ReLU()
+        self.activation_layer = nn.LeakyReLU()
 
     def forward(self, x):
         x = self.fc1(x)
