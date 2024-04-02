@@ -56,15 +56,27 @@ class RBF(nn.Module):
         return torch.exp(-distances.pow(2))
 
 
+class PlainRBFNetwork(nn.Module):
+    def __init__(self):
+        in_features = 14
+        out_features = 4
+
+        super(PlainRBFNetwork, self).__init__()
+        self.rbf_layer = RBF(in_features, out_features)
+
+    def forward(self, x):
+        x = self.rbf_layer(x)
+        return x
+
+
 class RBFNetwork(nn.Module):
     def __init__(self):
         in_features = 14
-        hidden_features = 8  #
+        hidden_features = 20  #
         out_features = 4
 
         super(RBFNetwork, self).__init__()
-        self.rbf_layer = RBF(in_features, hidden_features)
-        self.fc1 = nn.Linear(hidden_features, 128)
+        self.fc1 = nn.Linear(14, 128)
         self.fc2 = nn.Linear(128, 256)
         self.fc3 = nn.Linear(256, 512)
         self.fc4 = nn.Linear(512, 512)  # 新增层
@@ -73,13 +85,13 @@ class RBFNetwork(nn.Module):
         self.fc7 = nn.Linear(256, 128)
         self.fc8 = nn.Linear(128, 64)
         self.fc9 = nn.Linear(64, 32)
-        self.fc10 = nn.Linear(32, out_features)
+        self.rbf_layer = RBF(32, 16)
+        self.final_layer = nn.Linear(16, 4)
 
         self.activation_layer = nn.ReLU()
 
     def forward(self, x):
-        x = self.rbf_layer(x)
-        x = self.activation_layer(self.fc1(x))
+        x = self.fc1(x)
         x = self.activation_layer(self.fc2(x))
         x = self.activation_layer(self.fc3(x))
         x = self.activation_layer(self.fc4(x))  # 新增层
@@ -87,8 +99,9 @@ class RBFNetwork(nn.Module):
         x = self.activation_layer(self.fc6(x))
         x = self.activation_layer(self.fc7(x))
         x = self.activation_layer(self.fc8(x))
-        x = self.activation_layer(self.fc9(x))
-        x = self.fc10(x)
+        x = self.fc9(x)
+        x = self.rbf_layer(x)
+        x = self.final_layer(x)
         return x
 
 

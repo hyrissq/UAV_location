@@ -13,7 +13,7 @@ test_points_num = 1500
 epoch = 600
 train_batch_size = 128
 test_batch_size = test_points_num
-learning_rate = 0.0003
+learning_rate = 0.0007
 # learning_rate = 0.0003
 
 # oppler and w para
