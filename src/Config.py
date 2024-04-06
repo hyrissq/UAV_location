@@ -8,12 +8,12 @@ vertex4 = np.array([300, 150])
 margin = 0.1  # Example margin
 
 # Training para
-train_points_num = 300000
+train_points_num = 200000
 test_points_num = 1500
-epoch = 600
+epoch = 1200
 train_batch_size = 128
 test_batch_size = test_points_num
-learning_rate = 0.0002
+learning_rate = 0.0003
 # learning_rate = 0.0003
 
 # oppler and w para
@@ -22,5 +22,5 @@ c = 3 * 10e8
 v = 10
 
 # using_model = "rbf"
-# using_model = "dnn"
-using_model = "Transformer"
+using_model = "dnn"
+# using_model = "Transformer"

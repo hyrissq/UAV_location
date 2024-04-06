@@ -43,7 +43,7 @@ class RBF(nn.Module):
         self.out_features = out_features
         self.centers = nn.Parameter(torch.Tensor(out_features, in_features))
         self.log_sigmas = nn.Parameter(torch.Tensor(out_features))
-        nn.init.uniform_(self.centers, 0, 300)
+        nn.init.uniform_(self.centers, 0, 1)
         nn.init.uniform_(self.log_sigmas, -1, 1)
 
     def forward(self, x):
@@ -77,16 +77,27 @@ class RBFNetwork(nn.Module):
 
         super(RBFNetwork, self).__init__()
         self.fc1 = nn.Linear(14, 128)
+        self.bn1 = nn.BatchNorm1d(128)
         self.fc2 = nn.Linear(128, 256)
+        self.bn2 = nn.BatchNorm1d(256)
         self.fc3 = nn.Linear(256, 512)
-        self.fc4 = nn.Linear(512, 512)  # 新增层
-        self.fc5 = nn.Linear(512, 512)  # 新增层
+        self.bn3 = nn.BatchNorm1d(512)
+        self.fc4 = nn.Linear(512, 512)
+        self.bn4 = nn.BatchNorm1d(512)
+        self.fc5 = nn.Linear(512, 512)
+        self.bn5 = nn.BatchNorm1d(512)
         self.fc6 = nn.Linear(512, 256)
+        self.bn6 = nn.BatchNorm1d(256)
         self.fc7 = nn.Linear(256, 128)
-        self.fc8 = nn.Linear(128, 64)
-        self.fc9 = nn.Linear(64, 32)
-        self.rbf_layer = RBF(32, 16)
-        self.final_layer = nn.Linear(16, 4)
+        self.bn7 = nn.BatchNorm1d(128)
+        self.rbf_layer = RBF(128, 64)
+        self.final_layer = nn.Linear(64, 32)
+        # self.fc8 = nn.Linear(128, 64)
+        # self.bn8 = nn.BatchNorm1d(64)
+        self.fc9 = nn.Linear(32, 16)
+        self.bn9 = nn.BatchNorm1d(16)
+        self.fc10 = nn.Linear(16, 4)
+
 
         self.activation_layer = nn.LeakyReLU()
 
@@ -98,10 +109,12 @@ class RBFNetwork(nn.Module):
         x = self.activation_layer(self.fc5(x))  # 新增层
         x = self.activation_layer(self.fc6(x))
         x = self.activation_layer(self.fc7(x))
-        x = self.activation_layer(self.fc8(x))
-        x = self.fc9(x)
+        # x = self.activation_layer(self.fc8(x))
+        # x = self.fc9(x)
         x = self.rbf_layer(x)
         x = self.final_layer(x)
+        x = self.activation_layer(self.fc9(x))
+        x = self.fc10(x) 
         return x
 
 

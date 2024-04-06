@@ -10,10 +10,6 @@ def get_random_samples_in_quad(x1, y1, x2, y2, x3, y3, x4, y4, train_points_num)
     point3 = np.array([x3, y3])
     point4 = np.array([x4, y4])
 
-    # Divide the quadrilateral into two triangles:
-    # Triangle 1: point0, point1, point2
-    # Triangle 2: point2, point3, point0
-
     # List to store the random points
     randomPoints = []
 
