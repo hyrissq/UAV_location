@@ -1,13 +1,16 @@
 import numpy as np
 
-# Train dataset generation
+# train dataset generation
 vertex1 = np.array([0, 0])
 vertex2 = np.array([200, 0])
 vertex3 = np.array([100, 100])
 vertex4 = np.array([300, 150])
 margin = 0.1  # Example margin
 
-# Training para
+# testing dataset generation
+use_new_test_gen_method = False
+
+# training para
 train_points_num = 200000
 test_points_num = 1500
 epoch = 1200
@@ -21,6 +24,7 @@ fc = 6 * 10e9
 c = 3 * 10e8
 v = 10
 
+# using model
 # using_model = "rbf"
 using_model = "dnn"
 # using_model = "Transformer"
