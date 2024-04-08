@@ -8,10 +8,10 @@ vertex4 = np.array([300, 150])
 margin = 0.1  # Example margin
 
 # testing dataset generation
-use_new_test_gen_method = False
+use_new_test_gen_method = True
 
 # training para
-train_points_num = 200000
+train_points_num = 500000
 test_points_num = 1500
 epoch = 1200
 train_batch_size = 128
