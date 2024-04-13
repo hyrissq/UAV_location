@@ -98,7 +98,6 @@ class RBFNetwork(nn.Module):
         self.bn9 = nn.BatchNorm1d(16)
         self.fc10 = nn.Linear(16, 4)
 
-
         self.activation_layer = nn.LeakyReLU()
 
     def forward(self, x):
@@ -114,7 +113,7 @@ class RBFNetwork(nn.Module):
         x = self.rbf_layer(x)
         x = self.final_layer(x)
         x = self.activation_layer(self.fc9(x))
-        x = self.fc10(x) 
+        x = self.fc10(x)
         return x
 
 

@@ -207,19 +207,19 @@ def get_angle_theta(coords_A, coords_B):
     ]
 
 
-def getWAndDoppler(coords_A, coords_B):
-    data_length = np.shape(coords_A)[0]
+def getWAndDoppler(coords_a, coords_b):
+    data_length = np.shape(coords_a)[0]
 
-    [phi1, phi2, phi3, phi4] = get_angle_phi(coords_A, coords_B)
-    [theta1, theta2, theta3, theta4] = get_angle_theta(coords_A, coords_B)
+    [phi1, phi2, phi3, phi4] = get_angle_phi(coords_a, coords_b)
+    [theta1, theta2, theta3, theta4] = get_angle_theta(coords_a, coords_b)
 
     w = np.zeros([data_length, 3])
     doppler = np.zeros([data_length, 3])
     for i in range(data_length):
-        x = coords_A[i][0]
-        y = coords_A[i][1]
-        x1 = coords_B[i][0]
-        y1 = coords_B[i][1]
+        x = coords_a[i][0]
+        y = coords_a[i][1]
+        x1 = coords_b[i][0]
+        y1 = coords_b[i][1]
 
         d11 = calculate_distance(x, y, cf.vertex1[0], cf.vertex1[1])
         d12 = calculate_distance(x1, y1, cf.vertex1[0], cf.vertex1[1])

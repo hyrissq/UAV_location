@@ -54,7 +54,7 @@ def get_coordinates():
         shrinked_v3[1],
         shrinked_v4[0],
         shrinked_v4[1],
-        cf.train_points_num,
+        cf.train_set_num,
     )
     return np.vstack(coordinates)
 
