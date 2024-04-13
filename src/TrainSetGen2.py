@@ -170,4 +170,8 @@ def getFeaturesAndLabels(lines_a, w, doppler):
     reshaped_features = features.reshape(
         cf.train_set_num, cf.line_seq_count, 6)
     reshaped_labels = labels.reshape(cf.train_set_num, cf.line_seq_count, 2)
+
+    # drop the sequence of the label
+    reshaped_labels = reshaped_labels[:, -1, :]
+
     return [reshaped_features, reshaped_labels]

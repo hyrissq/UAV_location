@@ -188,13 +188,19 @@ class UavModel(nn.Module):
         self.dnn2 = DnnModule2(dropout_rate=0.35)
 
     def forward(self, x):
-        # Process inputs through DNN1
+        batch_size, seq_len, features_len = x.size()
+
+        # reshape input to discard x temporarily for the first module
+        x = x.view(-1, features_len)
+
         x = self.dnn1(x)
 
-        # The output from DNN1 is expected to be (batch_size, seq_len, features)
-        # Since LSTM expects all sequences to be of the same length, make sure that is handled before this step.
-        x = self.lstm(x)
+        # reshape x to original shape (restoring seq)
+        x = x.view(batch_size, seq_len, features_len)
 
-        # Process LSTM outputs through DNN2
+        x = self.lstm(x)
+        # lstm already returns the last hidden state of the sequences, no need to reshape
+
         x = self.dnn2(x)
+
         return x
