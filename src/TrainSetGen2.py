@@ -161,10 +161,13 @@ def get_labels(lines_a):
     for line in lines_a:
         for coord_a in line:
             labels.append(get_d_phi(coord_a))
-    return labels
+    return np.array(labels)
 
 
 def getFeaturesAndLabels(lines_a, w, doppler):
     features = np.concatenate((w, doppler), axis=1)
     labels = get_labels(lines_a)
-    return [features, labels]
+    reshaped_features = features.reshape(
+        cf.train_set_num, cf.line_seq_count, 6)
+    reshaped_labels = labels.reshape(cf.train_set_num, cf.line_seq_count, 2)
+    return [reshaped_features, reshaped_labels]

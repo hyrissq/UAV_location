@@ -179,9 +179,9 @@ class DnnModule2(nn.Module):
         return x
 
 
-class UAVModel(nn.Module):
+class UavModel(nn.Module):
     def __init__(self):
-        super(UAVModel, self).__init__()
+        super(UavModel, self).__init__()
         self.dnn1 = DnnModule1(dropout_rate=0.35)
         self.lstm = LSTMModule(input_dim=8, hidden_dim=128,
                                num_layers=2, dropout_rate=0.2)
