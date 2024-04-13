@@ -80,26 +80,23 @@ class DnnModule1(nn.Module):
 
 
 class LSTMModule(nn.Module):
-    def __init__(self, input_dim, hidden_dim, num_layers, dropout_rate=0.35):
+    def __init__(self, input_dim, output_dim, hidden_dim, num_layers, dropout_rate):
         super(LSTMModule, self).__init__()
         self.lstm = nn.LSTM(input_dim, hidden_dim, num_layers,
                             batch_first=True, dropout=dropout_rate)
-        self.hidden_dim = hidden_dim
+        self.final_fc = nn.Linear(hidden_dim, output_dim)
 
     def forward(self, x):
-        # Initialize hidden state with zeros
-        # Note: We generally initialize these to zero, but they can be learned or passed in with different initial values if needed.
-        # x.shape[0] is batch size
-        h0 = torch.zeros(self.lstm.num_layers,
-                         x.shape[0], self.hidden_dim).to(x.device)
-        c0 = torch.zeros(self.lstm.num_layers,
-                         x.shape[0], self.hidden_dim).to(x.device)
+        # Forward propagate LSTM
+        lstm_out, _ = self.lstm(x)  # lstm_out shape: [BS, seq_len, hidden_dim]
 
-        # Forward propagate the LSTM
-        out, (hn, cn) = self.lstm(x, (h0, c0))
+        # Use the output from the last timestep
+        final_output = lstm_out[:, -1, :]  # shape: [BS, hidden_dim]
 
-        # We will just pass the last hidden state of the sequences to the next dense layer (DNN2)
-        return hn[-1]
+        # Pass the last outputs through a final fully connected layer to get the desired output_dim
+        final_output = self.final_fc(final_output)  # shape: [BS, output_dim]
+
+        return final_output
 
 
 class DnnModule2(nn.Module):
@@ -183,8 +180,8 @@ class UavModel(nn.Module):
     def __init__(self):
         super(UavModel, self).__init__()
         self.dnn1 = DnnModule1(dropout_rate=0.35)
-        self.lstm = LSTMModule(input_dim=8, hidden_dim=128,
-                               num_layers=2, dropout_rate=0.2)
+        self.lstm = LSTMModule(input_dim=8, output_dim=8,
+                               hidden_dim=128, num_layers=2, dropout_rate=0.2)
         self.dnn2 = DnnModule2(dropout_rate=0.35)
 
     def forward(self, x):
@@ -196,7 +193,7 @@ class UavModel(nn.Module):
         x = self.dnn1(x)
 
         # reshape x to original shape (restoring seq)
-        x = x.view(batch_size, seq_len, features_len)
+        x = x.view(batch_size, seq_len, 8)
 
         x = self.lstm(x)
         # lstm already returns the last hidden state of the sequences, no need to reshape

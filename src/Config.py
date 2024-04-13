@@ -7,20 +7,22 @@ vertex3 = np.array([100, 100])
 vertex4 = np.array([300, 150])
 
 margin = 0.1  # Example margin
-train_set_num = 4
+train_set_num = 102400
 
-line_seq_count = 3
+line_seq_count = 10
 line_total_length = 50
 line_angle_change = 4
 
 # testing dataset generation
 use_new_test_gen_method = True
 
-test_points_num = 1500
-epoch = 1200
-train_batch_size = 2
-test_batch_size = test_points_num
+# test_points_num = 1500
+# test_batch_size = test_points_num
+
+epoch = 1000
+train_batch_size = 128
 learning_rate = 0.0003
+
 # learning_rate = 0.0003
 
 # oppler and w para
