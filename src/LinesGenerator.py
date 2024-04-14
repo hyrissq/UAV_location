@@ -87,29 +87,39 @@ def get_coords_b(coords_a, angle):
 
 def try_create_line_in_bounding_box(detecting_region_info, step_count_per_line, length_per_step, angle_change_limit_per_step):
     # Start from a random point inside the boundary
-    starting_coords_a = get_random_sample_in_detecting_region(
+    _angle = np.random.rand() * 2 * np.pi
+
+    _coords_a = get_random_sample_in_detecting_region(
         detecting_region_info)
-    starting_angle = np.random.rand() * 2 * np.pi
+    _coords_b = get_coords_b(_coords_a, _angle)
 
-    _angle = starting_angle
-    _coords_a = starting_coords_a
+    in_boundary = point_in_boundary(
+        detecting_region_info, _coords_a
+    ) and point_in_boundary(
+        detecting_region_info, _coords_b
+    )
+    if not in_boundary:
+        return [None, None, False]
 
-    line_a = [starting_coords_a]
-    line_b = [get_coords_b(starting_coords_a, starting_angle)]
+    line_a = [_coords_a]
+    line_b = [_coords_b]
 
     while True:
         [_angle, _coords_a] = random_walk(
             angle_change_limit_per_step, length_per_step, _angle, _coords_a
         )
+        _coords_b = get_coords_b(_coords_a, _angle)
 
         in_boundary = point_in_boundary(
             detecting_region_info, _coords_a
+        ) and point_in_boundary(
+            detecting_region_info, _coords_b
         )
         if not in_boundary:
-            return [line_a, line_b, False]
+            return [None, None, False]
 
         line_a.append(_coords_a)
-        line_b.append(get_coords_b(_coords_a, _angle))
+        line_b.append(_coords_b)
 
         if len(line_a) == step_count_per_line:
             return [line_a, line_b, True]
