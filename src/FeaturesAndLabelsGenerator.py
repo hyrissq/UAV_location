@@ -19,9 +19,18 @@ def get_labels(detecting_region_info, lines_a):
     return np.array(labels)
 
 
+def get_labels_coords(lines_a):
+    labels = []
+    for line in lines_a:
+        for coord_a in line:
+            labels.append(coord_a)
+    return np.array(labels)
+
+
 def generateFeaturesAndLabels(detecting_region_info, lines_a, w, doppler, num_of_lines_to_generate, step_count_per_line):
     features = np.concatenate((w, doppler), axis=1)
-    labels = get_labels(detecting_region_info, lines_a)
+    # labels = get_labels(detecting_region_info, lines_a)
+    labels = get_labels_coords(lines_a)
     reshaped_features = features.reshape(
         num_of_lines_to_generate, step_count_per_line, 6)
     reshaped_labels = labels.reshape(

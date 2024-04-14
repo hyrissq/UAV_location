@@ -104,7 +104,7 @@ def try_create_line_in_bounding_box(a_b_distance, detecting_region_info, step_co
         [_angle, _coords_a] = random_walk(
             angle_change_limit_per_step, length_per_step, _angle, _coords_a
         )
-        _coords_b = get_coords_b(_coords_a, _angle)
+        _coords_b = get_coords_b(a_b_distance, _coords_a, _angle)
 
         in_boundary = point_in_boundary(
             detecting_region_info, _coords_a
