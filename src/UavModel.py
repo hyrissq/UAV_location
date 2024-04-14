@@ -57,7 +57,7 @@ class DnnModule1(nn.Module):
         self.dp12 = nn.Dropout(dropout_rate)
 
         # Output layer
-        self.fc13 = nn.Linear(32, 8)
+        self.fc13 = nn.Linear(32, 2)
 
         # Activation function
         self.activation = nn.ReLU()
@@ -180,7 +180,7 @@ class UavModel(nn.Module):
     def __init__(self):
         super(UavModel, self).__init__()
         self.dnn1 = DnnModule1(dropout_rate=0.35)
-        self.lstm = LSTMModule(input_dim=8, output_dim=8,
+        self.lstm = LSTMModule(input_dim=2, output_dim=2,
                                hidden_dim=128, num_layers=2, dropout_rate=0.2)
         self.dnn2 = DnnModule2(dropout_rate=0.35)
 
@@ -193,11 +193,11 @@ class UavModel(nn.Module):
         x = self.dnn1(x)
 
         # reshape x to original shape (restoring seq)
-        x = x.view(batch_size, seq_len, 8)
+        x = x.view(batch_size, seq_len, 2)
 
         x = self.lstm(x)
         # lstm already returns the last hidden state of the sequences, no need to reshape
 
-        x = self.dnn2(x)
+        # x = self.dnn2(x)
 
         return x

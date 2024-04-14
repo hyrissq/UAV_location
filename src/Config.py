@@ -7,10 +7,10 @@ vertex3 = np.array([100, 100])
 vertex4 = np.array([300, 150])
 
 margin = 0.1  # Example margin
-train_set_num = 102400
+train_set_num = 10
 
-line_seq_count = 10
-line_total_length = 50
+line_seq_count = 5
+line_total_length = 2.0
 line_angle_change = 4
 
 # testing dataset generation
