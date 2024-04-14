@@ -1,6 +1,4 @@
 import numpy as np
-import src.Config as cf
-import WAndDopplerGenerator as WAndDopplerGenerator
 
 
 def sign(p1, p2, p3):
@@ -77,13 +75,10 @@ def get_coords_b(coords_a, angle):
     return coords_a + np.array([np.cos(angle), np.sin(angle)]) * a_b_distance
 
 
-def create_line(line_seq_len, line_length, angle_change_limit):
-    angle_change_per_step = angle_change_limit / line_seq_len
-    length_per_step = line_length / line_seq_len
-
+def try_create_line_in_bounding_box(detecting_region_info, step_count_per_line, length_per_step, angle_change_limit_per_step):
     # Start from a random point inside the boundary
     starting_coords_a = get_random_sample_in_quad(
-        cf.vertex1, cf.vertex2, cf.vertex3, cf.vertex4
+        detecting_region_info.v1, detecting_region_info.v2, detecting_region_info.v3, detecting_region_info.v4
     )
     starting_angle = np.random.rand() * 2 * np.pi
 
@@ -95,11 +90,11 @@ def create_line(line_seq_len, line_length, angle_change_limit):
 
     while True:
         [_angle, _coords_a] = random_walk(
-            angle_change_per_step, length_per_step, _angle, _coords_a
+            angle_change_limit_per_step, length_per_step, _angle, _coords_a
         )
 
         in_boundary = point_in_boundary(
-            cf.vertex1, cf.vertex2, cf.vertex3, cf.vertex4, _coords_a
+            detecting_region_info.v1, detecting_region_info.v2, detecting_region_info.v3, detecting_region_info.v4, _coords_a
         )
         if not in_boundary:
             return [line_a, line_b, False]
@@ -107,20 +102,19 @@ def create_line(line_seq_len, line_length, angle_change_limit):
         line_a.append(_coords_a)
         line_b.append(get_coords_b(_coords_a, _angle))
 
-        if len(line_a) == line_seq_len:
+        if len(line_a) == step_count_per_line:
             return [line_a, line_b, True]
 
 
-def getLinesAndRawFeatures():
+def generateLines(detecting_region_info, num_of_lines_to_generate, step_count_per_line, length_per_step, angle_change_limit_per_step):
     valid_line_count = 0
 
     lines_a = []
     lines_b = []
 
-    while valid_line_count < cf.train_set_num:
-        [line_a, line_b, valid] = create_line(
-            line_seq_len=cf.line_seq_count, line_length=cf.line_step_length, angle_change_limit=cf.line_step_angle_change
-        )
+    while valid_line_count < num_of_lines_to_generate:
+        [line_a, line_b, valid] = try_create_line_in_bounding_box(detecting_region_info,
+                                                                  step_count_per_line, length_per_step, angle_change_limit_per_step)
 
         if valid:
             valid_line_count += 1
@@ -130,48 +124,4 @@ def getLinesAndRawFeatures():
     lines_a = np.array(lines_a)
     lines_b = np.array(lines_b)
 
-    coords_a = []
-    for line in lines_a:
-        for point in line:
-            coords_a.append(point)
-    coords_a = np.array(coords_a)
-
-    coords_b = []
-    for line in lines_b:
-        for point in line:
-            coords_b.append(point)
-    coords_b = np.array(coords_b)
-
-    [w, doppler] = WAndDopplerGenerator.getWAndDoppler(coords_a, coords_b)
-    return [lines_a, lines_b, w, doppler]
-
-
-def get_d_phi(coord_a):
-    ref = cf.vertex1
-    phi = np.arctan2(coord_a[1] - ref[1], coord_a[0] - ref[0])
-    # change range from -pi to pi to 0 to 2pi
-    if phi < 0:
-        phi += 2 * np.pi
-    d = np.sqrt((coord_a[0] - ref[0])**2 + (coord_a[1] - ref[1])**2)
-    return [d, phi]
-
-
-def get_labels(lines_a):
-    labels = []
-    for line in lines_a:
-        for coord_a in line:
-            labels.append(get_d_phi(coord_a))
-    return np.array(labels)
-
-
-def getFeaturesAndLabels(lines_a, w, doppler):
-    features = np.concatenate((w, doppler), axis=1)
-    labels = get_labels(lines_a)
-    reshaped_features = features.reshape(
-        cf.train_set_num, cf.line_seq_count, 6)
-    reshaped_labels = labels.reshape(cf.train_set_num, cf.line_seq_count, 2)
-
-    # drop the sequence of the label
-    reshaped_labels = reshaped_labels[:, -1, :]
-
-    return [reshaped_features, reshaped_labels]
+    return [lines_a, lines_b]
