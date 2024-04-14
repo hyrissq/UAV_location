@@ -117,9 +117,9 @@ def getLinesAndRawFeatures():
     lines_a = []
     lines_b = []
 
-    while valid_line_count < cf.train_set_num:
+    while valid_line_count < cf.train_num_of_lines_to_generate:
         [line_a, line_b, valid] = create_line(
-            line_seq_len=cf.line_seq_count, line_length=cf.line_step_length, angle_change_limit=cf.line_step_angle_change
+            line_seq_len=cf.train_step_count_per_line, line_length=cf.length_per_step, angle_change_limit=cf.angle_change_limit_per_step
         )
 
         if valid:
@@ -168,8 +168,9 @@ def getFeaturesAndLabels(lines_a, w, doppler):
     features = np.concatenate((w, doppler), axis=1)
     labels = get_labels(lines_a)
     reshaped_features = features.reshape(
-        cf.train_set_num, cf.line_seq_count, 6)
-    reshaped_labels = labels.reshape(cf.train_set_num, cf.line_seq_count, 2)
+        cf.train_num_of_lines_to_generate, cf.train_step_count_per_line, 6)
+    reshaped_labels = labels.reshape(
+        cf.train_num_of_lines_to_generate, cf.train_step_count_per_line, 2)
 
     # drop the sequence of the label
     reshaped_labels = reshaped_labels[:, -1, :]

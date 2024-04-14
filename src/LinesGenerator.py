@@ -144,3 +144,22 @@ def generateLines(detecting_region_info, num_of_lines_to_generate, step_count_pe
     lines_b = np.array(lines_b)
 
     return [lines_a, lines_b]
+
+
+def reparseSingleLineAsLines(line_a, line_b, num_of_lines_to_generate, step_count_per_line):
+    lines_a = []
+    lines_b = []
+
+    point_size_of_line_a = len(line_a)
+    print("point_size_of_line_a: ", point_size_of_line_a)
+
+    assert (num_of_lines_to_generate +
+            (step_count_per_line - 1)) <= point_size_of_line_a
+
+    cursor = 0
+    while cursor < num_of_lines_to_generate:
+        lines_a.append(line_a[cursor: cursor + step_count_per_line])
+        lines_b.append(line_b[cursor: cursor + step_count_per_line])
+        cursor += 1
+
+    return [lines_a, lines_b]
