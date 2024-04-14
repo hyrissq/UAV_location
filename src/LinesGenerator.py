@@ -55,10 +55,6 @@ def get_random_sample_in_detecting_region(detecting_region_info):
     return base_point + edge0 * x + edge1 * y
 
 
-angle_change_limit = 0.1
-a_b_distance = 0.05  # Distance from this A to this B
-
-
 def random_angle_change(original_angle, angle_change_tolerance):
     # Generate a random angle change within the tolerance
     ang = original_angle + (np.random.rand() - 0.5) * \
@@ -73,25 +69,25 @@ def random_angle_change(original_angle, angle_change_tolerance):
 
 
 def random_walk(angle_change_per_step, length_per_step, last_angle, last_coords_a):
-    this_angle = random_angle_change(last_angle, angle_change_per_step)
     this_coords_a = (
         last_coords_a
-        + np.array([np.cos(this_angle), np.sin(this_angle)]) * length_per_step
+        + np.array([np.cos(last_angle), np.sin(last_angle)]) * length_per_step
     )
+    this_angle = random_angle_change(last_angle, angle_change_per_step)
     return [this_angle, this_coords_a]
 
 
-def get_coords_b(coords_a, angle):
+def get_coords_b(a_b_distance, coords_a, angle):
     return coords_a + np.array([np.cos(angle), np.sin(angle)]) * a_b_distance
 
 
-def try_create_line_in_bounding_box(detecting_region_info, step_count_per_line, length_per_step, angle_change_limit_per_step):
+def try_create_line_in_bounding_box(a_b_distance, detecting_region_info, step_count_per_line, length_per_step, angle_change_limit_per_step):
     # Start from a random point inside the boundary
     _angle = np.random.rand() * 2 * np.pi
 
     _coords_a = get_random_sample_in_detecting_region(
         detecting_region_info)
-    _coords_b = get_coords_b(_coords_a, _angle)
+    _coords_b = get_coords_b(a_b_distance, _coords_a, _angle)
 
     in_boundary = point_in_boundary(
         detecting_region_info, _coords_a
@@ -125,14 +121,14 @@ def try_create_line_in_bounding_box(detecting_region_info, step_count_per_line, 
             return [line_a, line_b, True]
 
 
-def generateLines(detecting_region_info, num_of_lines_to_generate, step_count_per_line, length_per_step, angle_change_limit_per_step):
+def generateLines(detecting_region_info, a_b_distance, num_of_lines_to_generate, step_count_per_line, length_per_step, angle_change_limit_per_step):
     valid_line_count = 0
 
     lines_a = []
     lines_b = []
 
     while valid_line_count < num_of_lines_to_generate:
-        [line_a, line_b, valid] = try_create_line_in_bounding_box(detecting_region_info,
+        [line_a, line_b, valid] = try_create_line_in_bounding_box(a_b_distance, detecting_region_info,
                                                                   step_count_per_line, length_per_step, angle_change_limit_per_step)
 
         if valid:

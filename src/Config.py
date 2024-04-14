@@ -10,6 +10,7 @@ test_set_num = 512
 train_step_count_per_line = 5
 length_per_step = 0.2
 angle_change_limit_per_step = 0.1
+a_b_distance = 0.05
 
 epoch = 1000
 train_batch_size = 128
