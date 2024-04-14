@@ -16,14 +16,24 @@ def point_in_triangle(v1, v2, v3, pt):
     return not (has_neg and has_pos)
 
 
-def point_in_boundary(v1, v2, v3, v4, point):
+def point_in_boundary(detecting_region_info, pt):
+    v1 = detecting_region_info.v1
+    v2 = detecting_region_info.v2
+    v3 = detecting_region_info.v3
+    v4 = detecting_region_info.v4
+
     # check if point is in boundary
-    return point_in_triangle(v1, v2, v3, point) or point_in_triangle(
-        v3, v2, v4, point
+    return point_in_triangle(v1, v2, v3, pt) or point_in_triangle(
+        v3, v2, v4, pt
     )
 
 
-def get_random_sample_in_quad(v1, v2, v3, v4):
+def get_random_sample_in_detecting_region(detecting_region_info):
+    v1 = detecting_region_info.v1
+    v2 = detecting_region_info.v2
+    v3 = detecting_region_info.v3
+    v4 = detecting_region_info.v4
+
     # Randomly choose one of the two triangles to place a point
     if np.random.rand() < 0.5:
         # Working with triangle 1 (p123)
@@ -77,9 +87,8 @@ def get_coords_b(coords_a, angle):
 
 def try_create_line_in_bounding_box(detecting_region_info, step_count_per_line, length_per_step, angle_change_limit_per_step):
     # Start from a random point inside the boundary
-    starting_coords_a = get_random_sample_in_quad(
-        detecting_region_info.v1, detecting_region_info.v2, detecting_region_info.v3, detecting_region_info.v4
-    )
+    starting_coords_a = get_random_sample_in_detecting_region(
+        detecting_region_info)
     starting_angle = np.random.rand() * 2 * np.pi
 
     _angle = starting_angle
@@ -94,7 +103,7 @@ def try_create_line_in_bounding_box(detecting_region_info, step_count_per_line, 
         )
 
         in_boundary = point_in_boundary(
-            detecting_region_info.v1, detecting_region_info.v2, detecting_region_info.v3, detecting_region_info.v4, _coords_a
+            detecting_region_info, _coords_a
         )
         if not in_boundary:
             return [line_a, line_b, False]
